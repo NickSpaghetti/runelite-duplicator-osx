@@ -16,15 +16,6 @@ import java.io.File;
 public interface DuplicatorConfig extends Config
 {
 	String CONFIG_GROUP = "runeliteduplicator";
-	@ConfigItem(
-		keyName = "runelite-duplicator-osx",
-		name = "Welcome To The Duplicator",
-		description = "The message to show to the user when they login"
-	)
-	default String greeting()
-	{
-		return "Hello";
-	}
 
 	@ConfigItem(
 			keyName = Constants.CUSTOM_RUNE_LITE_DIRECTORY,
