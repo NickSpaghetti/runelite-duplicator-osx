@@ -28,7 +28,7 @@ import static com.duplicator.DuplicatorConfig.CONFIG_GROUP;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Example"
+	name = "Duplicator-OSX"
 )
 public class DuplicatorPlugin extends Plugin
 {
@@ -73,7 +73,7 @@ public class DuplicatorPlugin extends Plugin
 		navButton = NavigationButton.builder()
 				.tooltip("RuneLite Duplicator")
 				.icon(ICON)
-				.priority(-1)
+				.priority(12)
 				.panel(panel)
 				.build();
 		clientToolbar.addNavigation(navButton);
