@@ -107,21 +107,4 @@ public class DuplicatorPlugin extends Plugin
 			runeLiteLocationManager.validateCustomRuneLiteDirectory();
 		}
 	}
-
-
-	private void openDirectoryChooser() {
-		SwingUtilities.invokeLater(() -> {
-			JFileChooser chooser = new JFileChooser();
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			chooser.setDialogTitle("Select Directory");
-
-			int result = chooser.showOpenDialog(null);
-			if (result == JFileChooser.APPROVE_OPTION) {
-				String selectedPath = chooser.getSelectedFile().getAbsolutePath();
-				configManager.setConfiguration(CONFIG_GROUP, Constants.CUSTOM_RUNE_LITE_DIRECTORY, selectedPath);
-				runeLiteLocationManager.validateCustomRuneLiteDirectory();
-			}
-
-		});
-	}
 }
