@@ -21,9 +21,6 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.OSType;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.nio.file.Paths;
-
 import static com.duplicator.DuplicatorConfig.CONFIG_GROUP;
 
 @Slf4j
