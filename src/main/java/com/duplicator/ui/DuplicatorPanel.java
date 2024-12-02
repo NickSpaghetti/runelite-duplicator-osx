@@ -4,17 +4,13 @@ import com.duplicator.Constants;
 import com.duplicator.DuplicatorConfig;
 import lombok.val;
 import net.runelite.api.Client;
-import net.runelite.client.config.ConfigManager;
 import net.runelite.client.ui.PluginPanel;
 
 import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.duplicator.DuplicatorConfig.CONFIG_GROUP;
-
 public class DuplicatorPanel extends PluginPanel {
-    private final JButton duplicateButton;
 
     @Inject
     DuplicatorConfig config;
@@ -25,7 +21,7 @@ public class DuplicatorPanel extends PluginPanel {
     {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-        duplicateButton = new JButton("Duplicate RuneLite");
+        JButton duplicateButton = new JButton("Duplicate RuneLite");
         duplicateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         duplicateButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
         duplicateButton.addActionListener(e -> duplicateRuneLite());
@@ -40,15 +36,13 @@ public class DuplicatorPanel extends PluginPanel {
         val runeLiteDir = config.useCustomDirectory() ? config.customRuneLiteDirectory() : Constants.DEFAULT_RUNE_LITE_DIRECTORY;
         SwingUtilities.invokeLater(() -> {
             try {
-                String[] command = {"open", "-n", "-a", runeLiteDir + "/RuneLite.app"};
+                String[] command = {"open", "-n", "-a", runeLiteDir + "/" + Constants.RUNE_LITE_APP};
                 Runtime.getRuntime().exec(command);
             } catch (Exception ex) {
-                SwingUtilities.invokeLater(()->{
-                    JOptionPane.showMessageDialog(client.getCanvas(),
-                            ex.getMessage(),
-                            "Error Opening Up RuneLite.app",
-                            JOptionPane.ERROR_MESSAGE);
-                });
+                SwingUtilities.invokeLater(()-> JOptionPane.showMessageDialog(client.getCanvas(),
+                        ex.getMessage(),
+                        "Error Opening Up RuneLite.app",
+                        JOptionPane.ERROR_MESSAGE));
             }
         });
     }

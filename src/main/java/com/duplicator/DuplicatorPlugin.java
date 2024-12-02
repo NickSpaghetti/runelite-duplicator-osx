@@ -7,9 +7,7 @@ import javax.swing.*;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -83,9 +81,6 @@ public class DuplicatorPlugin extends Plugin
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-		}
 	}
 
 	@Provides
@@ -141,7 +136,7 @@ public class DuplicatorPlugin extends Plugin
 			}
 			if(!doesContainRuneLiteApp(config.customRuneLiteDirectory())){
 				SwingUtilities.invokeLater(()->{
-					sb.append("You have set does not contain RuneLite.app. \n");
+					sb.append("You have set does not contain Constants.RUNE_LITE_APP. \n");
 					JOptionPane.showMessageDialog(client.getCanvas(),
 							sb.toString(),
 							"Invalid Directory",
@@ -157,7 +152,7 @@ public class DuplicatorPlugin extends Plugin
 	}
 	private boolean doesContainRuneLiteApp(String path){
 		val basePath = Paths.get(path);
-		val fullPath = basePath.resolve("RuneLite.app");
+		val fullPath = basePath.resolve(Constants.RUNE_LITE_APP);
 		val runeLiteAppPath = new File(fullPath.toString());
 		return runeLiteAppPath.exists();
 	}
