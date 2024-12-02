@@ -17,6 +17,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.client.util.OSType;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -50,6 +51,10 @@ public class DuplicatorPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		log.info("Example started!");
+		if(OSType.getOSType() != OSType.MacOS){
+			log.error("OS type is not MacOS");
+			return;
+		}
 		addNavBar();
 		if(config.useCustomDirectory()){
 			validateCustomRuneLiteDirectory();
