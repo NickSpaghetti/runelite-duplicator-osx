@@ -1,16 +1,7 @@
 package com.duplicator;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.val;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
-
-import javax.swing.*;
-import javax.swing.plaf.FileChooserUI;
-import java.awt.*;
-import java.io.File;
 
 @ConfigGroup("RuneLite Duplicator")
 public interface DuplicatorConfig extends Config
@@ -24,7 +15,7 @@ public interface DuplicatorConfig extends Config
 	)
 	default String customRuneLiteDirectory()
 	{
-		return System.getProperty("user.home");
+		return Constants.DEFAULT_RUNE_LITE_DIRECTORY;
 	}
 
 
