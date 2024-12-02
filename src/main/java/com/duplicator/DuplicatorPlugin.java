@@ -1,5 +1,6 @@
 package com.duplicator;
 
+import com.duplicator.managers.RuneLiteLocationManager;
 import com.duplicator.ui.DuplicatorPanel;
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -43,6 +44,9 @@ public class DuplicatorPlugin extends Plugin
 	@Inject
 	private ClientToolbar clientToolbar;
 
+	@Inject
+	private RuneLiteLocationManager runeLiteLocationManager;
+
 	private DuplicatorPanel panel;
 	private NavigationButton navButton;
 
@@ -50,21 +54,21 @@ public class DuplicatorPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		log.info("Example started!");
+		log.info("Duplicator-OSX started!");
 		if(OSType.getOSType() != OSType.MacOS){
 			log.error("OS type is not MacOS");
 			return;
 		}
 		addNavBar();
 		if(config.useCustomDirectory()){
-			validateCustomRuneLiteDirectory();
+			runeLiteLocationManager.validateCustomRuneLiteDirectory();
 		}
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Example stopped!");
+		log.info("Duplicator-OSX stopped!");
 		clientToolbar.removeNavigation(navButton);
 		panel = null;
 		navButton = null;
@@ -84,9 +88,7 @@ public class DuplicatorPlugin extends Plugin
 
 
 	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-	}
+	public void onGameStateChanged(GameStateChanged gameStateChanged) {}
 
 	@Provides
 	DuplicatorConfig provideConfig(ConfigManager configManager)
@@ -102,10 +104,10 @@ public class DuplicatorPlugin extends Plugin
 			if(!isCustomDirectoryUsed){
 				return;
 			}
-			validateCustomRuneLiteDirectory();
+			runeLiteLocationManager.validateCustomRuneLiteDirectory();
 		}
 		if(configName.equals(Constants.CUSTOM_RUNE_LITE_DIRECTORY) && config.useCustomDirectory()){
-			validateCustomRuneLiteDirectory();
+			runeLiteLocationManager.validateCustomRuneLiteDirectory();
 		}
 	}
 
@@ -120,45 +122,9 @@ public class DuplicatorPlugin extends Plugin
 			if (result == JFileChooser.APPROVE_OPTION) {
 				String selectedPath = chooser.getSelectedFile().getAbsolutePath();
 				configManager.setConfiguration(CONFIG_GROUP, Constants.CUSTOM_RUNE_LITE_DIRECTORY, selectedPath);
-				validateCustomRuneLiteDirectory();
+				runeLiteLocationManager.validateCustomRuneLiteDirectory();
 			}
 
 		});
-	}
-
-	private void validateCustomRuneLiteDirectory(){
-			val sb = new StringBuilder("The Custom Directory Path:");
-			sb.append(config.customRuneLiteDirectory());
-			if(!isValidDirectory(config.customRuneLiteDirectory())){
-				sb.append(" does not exist. \n");
-				SwingUtilities.invokeLater(()->{
-					JOptionPane.showMessageDialog(client.getCanvas(),
-							sb.toString(),
-							"Invalid Directory",
-							JOptionPane.ERROR_MESSAGE);
-				});
-				return;
-			}
-			if(!doesContainRuneLiteApp(config.customRuneLiteDirectory())){
-				SwingUtilities.invokeLater(()->{
-					sb.append("You have set does not contain Constants.RUNE_LITE_APP. \n");
-					JOptionPane.showMessageDialog(client.getCanvas(),
-							sb.toString(),
-							"Invalid Directory",
-							JOptionPane.ERROR_MESSAGE);
-				});
-				return;
-			}
-	}
-
-	private boolean isValidDirectory(String path){
-		val directory = new File(path);
-		return  directory.exists() && directory.isDirectory();
-	}
-	private boolean doesContainRuneLiteApp(String path){
-		val basePath = Paths.get(path);
-		val fullPath = basePath.resolve(Constants.RUNE_LITE_APP);
-		val runeLiteAppPath = new File(fullPath.toString());
-		return runeLiteAppPath.exists();
 	}
 }

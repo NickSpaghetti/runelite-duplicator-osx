@@ -2,6 +2,7 @@ package com.duplicator.ui;
 
 import com.duplicator.Constants;
 import com.duplicator.DuplicatorConfig;
+import com.duplicator.managers.RuneLiteLocationManager;
 import lombok.val;
 import net.runelite.api.Client;
 import net.runelite.client.ui.PluginPanel;
@@ -16,6 +17,8 @@ public class DuplicatorPanel extends PluginPanel {
     DuplicatorConfig config;
     @Inject
     private Client client;
+    @Inject
+    private RuneLiteLocationManager locationManager;
 
     DuplicatorPanel()
     {
@@ -23,7 +26,7 @@ public class DuplicatorPanel extends PluginPanel {
 
         JButton duplicateButton = new JButton("Duplicate RuneLite");
         duplicateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        duplicateButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        duplicateButton.setMaximumSize(new Dimension(1000, 50));
         duplicateButton.addActionListener(e -> duplicateRuneLite());
 
 
@@ -33,10 +36,19 @@ public class DuplicatorPanel extends PluginPanel {
 
     private void duplicateRuneLite()
     {
-        val runeLiteDir = config.useCustomDirectory() ? config.customRuneLiteDirectory() : Constants.DEFAULT_RUNE_LITE_DIRECTORY;
+        val runeLiteLocation = locationManager.GetRuneLiteLocation();
+        if(runeLiteLocation == null){
+            SwingUtilities.invokeLater(()->{
+                JOptionPane.showMessageDialog(client.getCanvas(),
+                        String.format("RuneLite.app was not found in the directory %s",locationManager.GetRuneLiteParentDirectory()),
+                        "Unable to find RuneLite.app",
+                        JOptionPane.ERROR_MESSAGE);
+            });
+            return;
+        }
         SwingUtilities.invokeLater(() -> {
             try {
-                String[] command = {"open", "-n", "-a", runeLiteDir + "/" + Constants.RUNE_LITE_APP};
+                String[] command = {"open", "-n", "-a", runeLiteLocation};
                 Runtime.getRuntime().exec(command);
             } catch (Exception ex) {
                 SwingUtilities.invokeLater(()-> JOptionPane.showMessageDialog(client.getCanvas(),
