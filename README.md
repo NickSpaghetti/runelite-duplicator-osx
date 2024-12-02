@@ -1,2 +1,2 @@
 # RuneLite Duplicator OSX
-Allows you to open up a new instance of Runelite without having to run the open command or shift click on Runelite.app
+Allows you to open up a new instance of RuneLite without having to run the open command or shift click on RuneLite.app
