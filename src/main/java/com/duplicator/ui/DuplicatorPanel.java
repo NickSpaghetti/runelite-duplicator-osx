@@ -52,6 +52,14 @@ public class DuplicatorPanel extends PluginPanel {
             });
             return;
         }
+        if(!locationManager.isValidHash(locationManager.GetRuneLiteJarLocation())){
+            SwingUtilities.invokeLater(()->{
+                JOptionPane.showMessageDialog(null,
+                        "The current RuneLite.jar hash does not match the last 3 recent releases at https://github.com/runelite/launcher/releases",
+                        "Unable to verify RuneLite.jar",
+                        JOptionPane.ERROR_MESSAGE);
+            });
+        }
         SwingUtilities.invokeLater(() -> {
             try {
                 String normalizedPath = new File(runeLiteLocation).getCanonicalPath();
