@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.swing.*;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
@@ -21,7 +20,6 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.OSType;
 
 import java.awt.image.BufferedImage;
-import static com.duplicator.DuplicatorConfig.CONFIG_GROUP;
 
 @Slf4j
 @PluginDescriptor(
@@ -54,6 +52,11 @@ public class DuplicatorPlugin extends Plugin
 		log.info("Duplicator-OSX started!");
 		if(OSType.getOSType() != OSType.MacOS){
 			log.error("OS type is not MacOS");
+			JOptionPane.showMessageDialog(null,
+					"This plugin is only available on MacOS.\n" +
+							"Current OS: " + OSType.getOSType().name(),
+					"Unsupported Operating System",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		addNavBar();

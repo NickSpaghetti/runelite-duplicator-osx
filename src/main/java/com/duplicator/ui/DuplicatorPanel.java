@@ -1,6 +1,5 @@
 package com.duplicator.ui;
 
-import com.duplicator.Constants;
 import com.duplicator.DuplicatorConfig;
 import com.duplicator.managers.RuneLiteLocationManager;
 import lombok.val;
@@ -10,6 +9,7 @@ import net.runelite.client.ui.PluginPanel;
 import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class DuplicatorPanel extends PluginPanel {
 
@@ -26,9 +26,15 @@ public class DuplicatorPanel extends PluginPanel {
 
         JButton duplicateButton = new JButton("Duplicate RuneLite");
         duplicateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        duplicateButton.setMaximumSize(new Dimension(1000, 50));
-        duplicateButton.addActionListener(e -> duplicateRuneLite());
 
+        Dimension buttonSize = new Dimension(200, 60); // Width: 200, Height: 60
+        duplicateButton.setPreferredSize(buttonSize);
+        duplicateButton.setMaximumSize(buttonSize);
+        duplicateButton.setMinimumSize(buttonSize);
+
+        duplicateButton.setFont(new Font(duplicateButton.getFont().getName(), Font.PLAIN, 16));
+
+        duplicateButton.addActionListener(e -> duplicateRuneLite());
 
         add(Box.createRigidArea(new Dimension(0, 10)));
         add(duplicateButton);
@@ -48,8 +54,10 @@ public class DuplicatorPanel extends PluginPanel {
         }
         SwingUtilities.invokeLater(() -> {
             try {
-                String[] command = {"open", "-n", "-a", runeLiteLocation};
-                Runtime.getRuntime().exec(command);
+                String normalizedPath = new File(runeLiteLocation).getCanonicalPath();
+                String[] command = {"open", "-n", "-a", normalizedPath};
+                ProcessBuilder processBuilder = new ProcessBuilder(command);
+                processBuilder.start();
             } catch (Exception ex) {
                 SwingUtilities.invokeLater(()-> JOptionPane.showMessageDialog(client.getCanvas(),
                         ex.getMessage(),
