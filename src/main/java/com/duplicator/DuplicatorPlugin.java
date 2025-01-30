@@ -20,6 +20,8 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.OSType;
 
 import java.awt.image.BufferedImage;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Slf4j
 @PluginDescriptor(
@@ -60,8 +62,35 @@ public class DuplicatorPlugin extends Plugin
 			return;
 		}
 		addNavBar();
+		validateRuneLiteApp();
+
+	}
+
+	public void validateRuneLiteApp(){
 		if(config.useCustomDirectory()){
 			runeLiteLocationManager.validateCustomRuneLiteDirectory();
+		} else {
+			String runeliteAppLocation = runeLiteLocationManager.GetRuneLiteLocation();
+			String runeLiteJarLocation = runeliteAppLocation + Constants.RUNE_LITE_APP_JAR;
+			if(!Files.exists(Paths.get(runeLiteJarLocation))){
+				SwingUtilities.invokeLater(()->{
+					JOptionPane.showMessageDialog(null,
+							"Could not find RuneLite.jar to verify sha-256 hash is the last 3 recent releases",
+							"Unable to verify RuneLite.jar",
+							JOptionPane.ERROR_MESSAGE);
+				});
+				return;
+			}
+			boolean isValidHash = runeLiteLocationManager.isValidHash(runeLiteJarLocation);
+			if(!isValidHash){
+				SwingUtilities.invokeLater(()->{
+					JOptionPane.showMessageDialog(null,
+							"The current RuneLite.jar hash does not match the last 3 recent releases at https://github.com/runelite/launcher/releases",
+							"Unable to verify RuneLite.jar",
+							JOptionPane.ERROR_MESSAGE);
+				});
+				return;
+			}
 		}
 	}
 
