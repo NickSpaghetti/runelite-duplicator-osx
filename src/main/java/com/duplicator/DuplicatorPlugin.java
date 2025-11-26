@@ -51,7 +51,7 @@ public class DuplicatorPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		log.info("Duplicator-OSX started!");
+		log.info("Duplicator-macOS started!");
 		if(OSType.getOSType() != OSType.MacOS){
 			log.error("OS type is not MacOS");
 			JOptionPane.showMessageDialog(null,
@@ -97,7 +97,7 @@ public class DuplicatorPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Duplicator-OSX stopped!");
+		log.info("Duplicator-macOS stopped!");
 		clientToolbar.removeNavigation(navButton);
 		panel = null;
 		navButton = null;

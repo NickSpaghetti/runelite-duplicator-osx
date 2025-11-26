@@ -2,8 +2,8 @@ package com.duplicator.managers;
 
 import com.duplicator.Constants;
 import com.duplicator.DuplicatorConfig;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.runelite.api.Actor;
 import net.runelite.api.Client;
 
 import javax.inject.Inject;
@@ -18,6 +18,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Singleton
 public class RuneLiteLocationManager {
 
@@ -28,7 +29,7 @@ public class RuneLiteLocationManager {
     @Inject
     private Client client;
 
-    private List<String> LastThreeRuneLiteJarHashes = new ArrayList<String>();
+    private final List<String> LastThreeRuneLiteJarHashes = new ArrayList<String>();
 
     public String GetRuneLiteLocation() {
         val runeLiteDir = config.useCustomDirectory() ? config.customRuneLiteDirectory() : Constants.DEFAULT_RUNE_LITE_DIRECTORY;
@@ -121,9 +122,10 @@ public class RuneLiteLocationManager {
         }
 
         byte[] hashBytes = md.digest();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(hashBytes.length * 2);
         for (byte b : hashBytes) {
-            sb.append(String.format("%02x", b));
+            sb.append(Character.forDigit((b >> 4) & 0xF, 16));
+            sb.append(Character.forDigit((b & 0xF), 16));
         }
         return sb.toString();
     }
@@ -136,6 +138,7 @@ public class RuneLiteLocationManager {
             String localJarHash = getFileSHA256(runeLiteJarFilePath);
             return LastThreeRuneLiteJarHashes.contains(localJarHash);
         } catch(Exception e){
+            log.error("error when trying to validate hash.{}", e.getMessage());
             return false;
         }
     }

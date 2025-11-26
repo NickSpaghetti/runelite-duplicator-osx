@@ -3,6 +3,7 @@ package com.duplicator.managers;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
 
+@Slf4j
 public class GithubFileHashManger {
     private static final String GITHUB_API_BASE_URL = "https://api.github.com";
     private static final OkHttpClient client = new OkHttpClient();
@@ -38,6 +40,7 @@ public class GithubFileHashManger {
                     try {
                         return calculateFileHash(downloadUrl);
                     } catch (Exception e) {
+                        log.error("Failed to calculate file hash for {}", downloadUrl);
                         throw new RuntimeException(e);
                     }
                 }));
@@ -62,32 +65,35 @@ public class GithubFileHashManger {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
+            assert response.body() != null;
             return response.body().string();
         }
     }
 
     private String calculateFileHash(String downloadUrl) throws IOException, NoSuchAlgorithmException {
         Request request = new Request.Builder().url(downloadUrl).build();
-        try (Response response = client.newCall(request).execute();
-             InputStream inputStream = response.body().byteStream()) {
+        try (Response response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            try (InputStream inputStream = response.body().byteStream()) {
 
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                digest.update(buffer, 0, bytesRead);
-            }
-
-            byte[] hashBytes = digest.digest();
-            StringBuilder hexString = new StringBuilder();
-            for (byte hashByte : hashBytes) {
-                String hex = Integer.toHexString(0xff & hashByte);
-                if (hex.length() == 1) {
-                    hexString.append('0');
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    digest.update(buffer, 0, bytesRead);
                 }
-                hexString.append(hex);
+
+                byte[] hashBytes = digest.digest();
+                StringBuilder hexString = new StringBuilder();
+                for (byte hashByte : hashBytes) {
+                    String hex = Integer.toHexString(0xff & hashByte);
+                    if (hex.length() == 1) {
+                        hexString.append('0');
+                    }
+                    hexString.append(hex);
+                }
+                return hexString.toString();
             }
-            return hexString.toString();
         }
     }
 }
